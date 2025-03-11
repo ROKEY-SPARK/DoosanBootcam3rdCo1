@@ -52,7 +52,7 @@ cd ~/ros2_ws/src
 Clone the required repositories:
 
 ```bash
-git clone -b humble-devel https://github.com/doosan-robotics/doosan-robot2.git
+git clone -b humble https://github.com/doosan-robotics/doosan-robot2.git
 git clone -b humble https://github.com/ros-controls/gz_ros2_control
 ```
 
