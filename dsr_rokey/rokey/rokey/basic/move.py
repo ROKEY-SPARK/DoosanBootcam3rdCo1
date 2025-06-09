@@ -24,25 +24,25 @@ def main(args=None):
             movel,
         )
 
-        from DR_common2 import posx
+        from DR_common2 import posx, posj
 
     except ImportError as e:
         print(f"Error importing DSR_ROBOT2 : {e}")
         return
 
-    JReady = [0, 0, 90, 0, 90, 0]
-
-    pos1 = posx([341, -236, 100, 140, 180, 141])
-
-    
     set_tool("Tool Weight_2FG")
     set_tcp("2FG_TCP")
 
+    JReady = posj([0.0, 0.0, 90.0, 0.0, 90.0, 0.0])
+    pos1 = posx([350.0, 34.5, 300.0, 45.0, 180.0, 45.0])
+
+
     while rclpy.ok():
 
-        print("movej")
+        print(f"Moving to joint position: {JReady}")
         movej(JReady, vel=VELOCITY, acc=ACC)
-        print("movel")
+
+        print(f"Moving to task position: {pos1}")
         movel(pos1, vel=VELOCITY, acc=ACC)
 
     rclpy.shutdown()
