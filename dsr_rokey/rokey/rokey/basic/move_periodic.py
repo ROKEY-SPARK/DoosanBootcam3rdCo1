@@ -29,6 +29,8 @@ def main(args=None):
             DR_TOOL,
         )
 
+        from DR_common2 import posj
+
     except ImportError as e:
         print(f"Error importing DSR_ROBOT2 : {e}")
         return
@@ -36,12 +38,16 @@ def main(args=None):
     set_tool("Tool Weight_RG2")
     set_tcp("RG2_TCP")
     
-    JReady = [0, 0, 90, 0, 90, 0]
+    JReady = posj([0, 0, 90, 0, 90, 0])
+    example_amp = [0.0, 0.0, 0.0, 0.0, 0.0, 30.0]
 
     if rclpy.ok():
-
+        
+        print(f"Moving to joint position: {JReady}")
         movej(JReady, vel=VELOCITY, acc=ACC)
-        amove_periodic(amp=[0, 0, 0, 0, 0, 30], period=1.0, atime=0.02, repeat=3, ref=DR_TOOL)
+
+        print(f"Starting amove_periodic: {example_amp}")
+        amove_periodic(amp=example_amp, period=1.0, atime=0.02, repeat=3, ref=DR_TOOL)
 
     rclpy.shutdown()
 
