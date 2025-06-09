@@ -28,6 +28,8 @@ def main(args=None):
             movej,
         )
 
+        from DR_common2 import posj
+    
     except ImportError as e:
         print(f"Error importing DSR_ROBOT2 : {e}")
         return
@@ -35,15 +37,17 @@ def main(args=None):
     def wait_digital_input(sig_num):
         while not get_digital_input(sig_num):
             time.sleep(0.5)
-            print("Wait for digital input", sig_num)
+            print(f"Wait for digital input: {sig_num}")
             pass
 
     def release():
+        print("set for digital output 0 1 for release")
         set_digital_output(2, ON)
         set_digital_output(1, OFF)
         wait_digital_input(2)
 
     def grip():
+        print("set for digital output 1 0 for grip")
         set_digital_output(1, ON)
         set_digital_output(2, OFF)
         wait_digital_input(1)
@@ -51,13 +55,16 @@ def main(args=None):
     set_tool("Tool Weight_2FG")
     set_tcp("2FG_TCP")
 
-    # 초기 위치
-    JReady = [0, 0, 90, 0, 90, 0]
+
+    JReady = posj([0, 0, 90, 0, 90, 0])
+    
+    print(f"Moving to joint position: {JReady}")
     movej(JReady, vel=VELOCITY, acc=ACC)
 
     while rclpy.ok():
         grip()
         time.sleep(0.5)
+        
         release()
         time.sleep(0.5)
 
