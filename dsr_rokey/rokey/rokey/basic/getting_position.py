@@ -25,9 +25,6 @@ def main(args=None):
             set_tcp,
             movej,
             movel,
-            DR_FC_MOD_REL,
-            DR_AXIS_Z,
-            DR_BASE,
         )
 
         from DR_common2 import posx, posj
@@ -36,27 +33,33 @@ def main(args=None):
         print(f"Error importing DSR_ROBOT2 : {e}")
         return
 
+    def move_and_log(move_type, position, index, vel=VELOCITY, acc=ACC):
+        if move_type == "joint":
+            print(f"Moving to joint position: {position}")
+            movej(position, vel=vel, acc=acc)
+        elif move_type == "task":
+            print(f"Moving to task position: {position}")
+            movel(position, vel=vel, acc=acc)
+        else:
+            raise ValueError("Invalid move type. Use 'joint' or 'task'.")
+
+        pos, _ = get_current_posx()
+        print(f"current position{index} : {pos}")
+
+    set_tool("Tool Weight_2FG")
+    set_tcp("2FG_TCP")
+
     JReady = posj([0, 0, 90, 0, 90, 0])
     pos1 = posx([496.06, 93.46, 296.92, 20.75, 179.00, 19.09])
     pos2 = posx([548.70, -193.46, 96.92, 20.75, 179.00, 19.09])
     pos3 = posx([596.70, -7.46, 196.92, 20.75, 179.00, 19.09])
 
-    set_tool("Tool Weight_2FG")
-    set_tcp("2FG_TCP")
-
     if rclpy.ok():
-
-        movej(JReady, vel=VELOCITY, acc=ACC)
-        print("current position1 : ", get_current_posx())
-        movel(pos1, vel=VELOCITY, acc=ACC)
-        print("current position2 : ", get_current_posx())
-        movel(pos2, vel=VELOCITY, acc=ACC)
-        print("current position3 : ", get_current_posx())
-        movel(pos3, vel=VELOCITY, acc=ACC)
-        print("current position4 : ", get_current_posx())
-        movej(JReady, vel=VELOCITY, acc=ACC)
-        print("current position1 : ", get_current_posx())
-
+        move_and_log("joint", JReady, 1)
+        move_and_log("task", pos1, 2)
+        move_and_log("task", pos2, 3)
+        move_and_log("task", pos3, 4)
+        move_and_log("joint", JReady, 5)
     rclpy.shutdown()
 
 
