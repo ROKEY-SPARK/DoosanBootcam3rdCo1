@@ -16,7 +16,7 @@ DR_init.__dsr__model = ROBOT_MODEL
 
 def main(args=None):
     rclpy.init(args=args)
-    node = rclpy.create_node("move_periodic", namespace=ROBOT_ID)
+    node = rclpy.create_node("rokey_move_periodic", namespace=ROBOT_ID)
 
     DR_init.__dsr__node = node
 
