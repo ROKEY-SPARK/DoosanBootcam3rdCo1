@@ -15,7 +15,7 @@ ON, OFF = 1, 0
 
 def main(args=None):
     rclpy.init(args=args)
-    node = rclpy.create_node("grip_simple", namespace=ROBOT_ID)
+    node = rclpy.create_node("rokey_grip_simple", namespace=ROBOT_ID)
 
     DR_init.__dsr__node = node
 
