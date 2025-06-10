@@ -3,6 +3,7 @@
 import rclpy
 import DR_init
 
+import time
 import numpy as np
 
 # for single robot
@@ -28,13 +29,12 @@ def main(args=None):
             set_tcp,
             movej,
             amovel,
-            wait,
             DR_MV_RA_OVERRIDE,
             movel,
-            mwait,
+            get_current_posx,
         )
 
-        from DR_common2 import posx, posb
+        from DR_common2 import posx, posj
 
     except ImportError as e:
         print(f"Error importing DSR_ROBOT2 : {e}")
@@ -44,34 +44,32 @@ def main(args=None):
     set_tcp("2FG_TCP")
 
     # 초기 위치
-    JReady = [0, 0, 90, 0, 90, 0]
+    JReady = posj([0, 0, 90, 0, 90, 0])
+    print(f"Moving to joint position: {JReady}")
     movej(JReady, vel=VELOCITY, acc=ACC)
-    initial_point = posx(0, 300, 300, 0, 180, 0)
+
     point1 = posx([674.863, -10.427, 65.98, 101.889, -175.666, 109.147])
     point2 = posx([115.443, -510.482, 40.439, 24.334, -173.111, 102.941])
     point3 = posx([314.819, 374.565, 178.373, 51.638, 173.566, 10.385])
-    # point4 = posx()
-    # point5 = posx()
-    # point6 = posx()
-    
+    print(f"Setting to task position1: {point1}, idx : {0}")
+    print(f"Setting to task position2: {point2}, idx : {1}")
+    print(f"Setting to task position3: {point3}, idx : {2}")
 
     points = [point1, point2, point3]
     movel(point1, vel=VELOCITY, acc=ACC)
     idx = 0
-    while True:
-        print(f"move to {idx}")
+
+    while rclpy.ok():
+        print(f"Moving asynchronously, idx: {idx}")
+        pos, _ = get_current_posx()
+        time.sleep(0.1)
+        print(f"current position : {pos}")
         amovel(points[idx], vel=VELOCITY, acc=ACC, ra=DR_MV_RA_OVERRIDE)
-        wait(3)
+        time.sleep(3)
         idx+=1
         idx %= 3
-        
-    for i, P in enumerate(points):
-        print(f"move to {i}")
-        amovel(P, vel=VELOCITY, acc=ACC, ra=DR_MV_RA_OVERRIDE)
-        wait(1.0)
 
     rclpy.shutdown()
-
 
 if __name__ == "__main__":
     main()
