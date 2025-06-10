@@ -18,7 +18,7 @@ OFF, ON = 0, 1
 
 def main(args=None):
     rclpy.init(args=args)
-    node = rclpy.create_node("force_control", namespace=ROBOT_ID)
+    node = rclpy.create_node("rokey_amove_test", namespace=ROBOT_ID)
 
     DR_init.__dsr__node = node
 
