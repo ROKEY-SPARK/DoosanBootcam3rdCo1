@@ -35,34 +35,45 @@ def main(args=None):
             DR_BASE,
         )
 
-        from DR_common2 import posx
+        from DR_common2 import posx, posj
 
     except ImportError as e:
         print(f"Error importing DSR_ROBOT2 : {e}")
         return
 
-    pos = posx([496.06, 93.46, 96.92, 20.75, 179.00, 19.09])
-
-    # 초기 위치
-    JReady = [0, 0, 90, 0, 90, 0]
     set_tool("Tool Weight_2FG")
     set_tcp("2FG_TCP")
 
+    pos = posx([496.06, 93.46, 96.92, 20.75, 179.00, 19.09])
+    JReady = posj([0, 0, 90, 0, 90, 0])
+    
     while rclpy.ok():
-        # 초기 위치로 이동
+
+        print(f"Moving to joint position: {JReady}")
         movej(JReady, vel=VELOCITY, acc=ACC)
+
+        print(f"Moving to task position: {pos}")
         movel(pos, vel=VELOCITY, acc=ACC, ref=DR_BASE)
 
+        print("Starting task_compliance_ctrl")
         task_compliance_ctrl(stx=[500, 500, 500, 100, 100, 100])
-        time.sleep(0.1)
+        time.sleep(0.5)
+
+        print("Starting set_desired_force")
         set_desired_force(fd=[0, 0, -10, 0, 0, 0], dir=[0, 0, 1, 0, 0, 0], mod=DR_FC_MOD_REL)
 
+        # 외력이 0 이상 5 이하이면 0
+        # 외력이 5 초과이면 -1
         while not check_force_condition(DR_AXIS_Z, max=5):
-            time.sleep(0.1)
+            print("Waiting for an external force greater than 5 ")
+            time.sleep(0.5)
             pass
 
+        print("Starting release_force")
         release_force()
-        time.sleep(0.1)
+        time.sleep(0.5)
+        
+        print("Starting release_compliance_ctrl")      
         release_compliance_ctrl()
 
     rclpy.shutdown()
